@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>입력 요소 무너지는 애니메이션</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 50px;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    input, select {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+    .emoji {
+      position: absolute;
+      font-size: 2rem;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <input type="text" placeholder="이름을 입력하세요" />
+  </div>
+  <div class="form-group">
+    <select>
+      <option>옵션 1</option>
+      <option>옵션 2</option>
+    </select>
+  </div>
+
+  <script>
+    const gravity = 0.5; // 중력 가속도
+
+    function fall(element) {
+      let y = element.offsetTop;
+      let vy = 0;
+
+      // 요소의 위치를 절대 위치로 설정
+      const rect = element.getBoundingClientRect();
+      element.style.position = 'absolute';
+      element.style.left = rect.left + 'px';
+      element.style.top = rect.top + 'px';
+
+      // 애니메이션 함수
+      function animate() {
+        vy += gravity;
+        y += vy;
+        element.style.top = y + 'px';
+
+        // 요소가 화면 아래로 떨어지면 제거
+        if (y < window.innerHeight) {
+          requestAnimationFrame(animate);
+        } else {
+          element.remove();
+        }
+      }
+
+      animate();
+    }
+
+    function showEmoji(x, y) {
+      const emojiList = ['😊', '😂', '😜', '😎', '😍', '🤪', '😇', '🥳'];
+      const emoji = document.createElement('div');
+      emoji.classList.add('emoji');
+      emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+      emoji.style.left = `${x}px`;
+      emoji.style.top = `${y}px`;
+      document.body.appendChild(emoji);
+
+      // 애니메이션 종료 후 제거
+      emoji.addEventListener('animationend', () => {
+        emoji.remove();
+      });
+    }
+
+    // 모든 입력 요소에 클릭 이벤트 추가
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault(); // 기본 동작 방지
+        const rect = el.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        fall(el);
+        showEmoji(x, y);
+      });
+    });
+  </script>
+</body>
+</html>
